@@ -325,14 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Amount</div>
                         <div class="payment-amount" style="font-size: 20px; font-weight: 700; color: ${primaryColor}; text-align: center; margin: 5px 0;">${amount} LKR</div>
                     </div>
-                    // Uncomment to add payment method box in future
-                    /*
-                    <div class="payment-box" style="flex: 1; border: 1px solid ${primaryColor}; border-radius: 4px; padding: 15px; background: ${lightBg};">
-                        <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Method</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Bank Transfer</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Ref: TRX${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}</div>
-                    </div>
-                    */
                     <div class="payment-box" style="flex: 1; border: 1px solid ${primaryColor}; border-radius: 4px; padding: 15px; background: ${lightBg};">
                         <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Details</div>
                         <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Date: ${docDate}</div>
