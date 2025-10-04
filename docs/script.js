@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Set today's date as default
+    // Set today's date as default for both invoice and receipt
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('doc-date').value = today;
+    document.getElementById('invoice-date').value = today;
+    document.getElementById('receipt-date').value = today;
     
     // Color picker functionality
     const colorPicker = document.getElementById('primary-color');
@@ -26,18 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Document type selection
     const docOptions = document.querySelectorAll('.doc-option');
+    const invoiceFields = document.querySelector('.invoice-fields');
+    const receiptFields = document.querySelector('.receipt-fields');
+    
     docOptions.forEach(option => {
         option.addEventListener('click', function() {
             docOptions.forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
             
-            // Update document number placeholder based on selection
             const docType = this.dataset.type;
-            const docNumberInput = document.getElementById('doc-number');
             if (docType === 'invoice') {
-                docNumberInput.placeholder = 'e.g., ORG/INV/2025/001';
+                invoiceFields.style.display = 'block';
+                receiptFields.style.display = 'none';
             } else {
-                docNumberInput.placeholder = 'e.g., ORG/RCPT/2025/001';
+                invoiceFields.style.display = 'none';
+                receiptFields.style.display = 'block';
             }
         });
     });
@@ -104,12 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const orgDetails = document.getElementById('org-details').value;
         const primaryColor = document.getElementById('primary-color').value;
         const docType = document.querySelector('.doc-option.active').dataset.type;
-        const docNumber = document.getElementById('doc-number').value;
-        const docDate = new Date(document.getElementById('doc-date').value).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
         const itemCategory = document.getElementById('item-category').value;
         const itemTier = document.getElementById('item-tier').value;
         const amount = parseFloat(document.getElementById('amount').value).toLocaleString('en-US', {
@@ -124,6 +122,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const itemName = document.getElementById('item-name').value;
         const description = document.getElementById('description').value;
         
+        // Get document-specific values
+        let docNumber, docDate, originalInvoice, paymentMethod, paymentReference;
+        
+        if (docType === 'invoice') {
+            docNumber = document.getElementById('invoice-number').value;
+            docDate = new Date(document.getElementById('invoice-date').value).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        } else {
+            docNumber = document.getElementById('receipt-number').value;
+            docDate = new Date(document.getElementById('receipt-date').value).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            originalInvoice = document.getElementById('original-invoice').value;
+            paymentMethod = document.getElementById('payment-method').value;
+            paymentReference = document.getElementById('payment-reference').value;
+        }
+        
         // Get benefits
         const benefits = [];
         document.querySelectorAll('.benefit-input').forEach(input => {
@@ -133,7 +153,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Validate form
-        if (!docNumber || !itemCategory || !itemTier || !amount || !companyName || !address || !city || !postalCode || !itemName) {
+        let isValid = true;
+        const requiredFields = [
+            !docNumber, !itemCategory, !itemTier, !amount, 
+            !companyName, !address, !city, !postalCode, !itemName
+        ];
+        
+        if (docType === 'receipt') {
+            requiredFields.push(!originalInvoice);
+        }
+        
+        if (requiredFields.some(field => field)) {
             alert('Please fill in all required fields');
             return;
         }
@@ -153,7 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 orgName, orgDetails, primaryColor,
                 docNumber, docDate, itemCategory, itemTier, amount, 
                 companyName, attention, address, city, postalCode, 
-                itemName, description, benefits
+                itemName, description, benefits,
+                originalInvoice, paymentMethod, paymentReference
             );
         }
         
@@ -266,7 +297,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateReceiptHTML(orgName, orgDetails, primaryColor,
                                 docNumber, docDate, itemCategory, itemTier, amount, 
                                 companyName, attention, address, city, postalCode, 
-                                itemName, description, benefits) {
+                                itemName, description, benefits,
+                                originalInvoice, paymentMethod, paymentReference) {
         const lightBg = lightenColor(primaryColor, 0.9);
         
         return `
@@ -300,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="detail-row" style="display: flex; margin-bottom: 6px;">
                             <div class="detail-label" style="font-weight: 600; width: 140px; font-size: 14px;">Original Invoice:</div>
-                            <div class="detail-value" style="font-size: 14px;">${docNumber.replace('RCPT', 'INV')}</div>
+                            <div class="detail-value" style="font-size: 14px;">${originalInvoice}</div>
                         </div>
                     </div>
                     <div class="received-from" style="flex: 1;">
@@ -315,92 +347,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 
                 <!-- Payment Status -->
-                <div class="status-badge" style="background-color: #e8f5e8; color: #2e7d32; padding: 8px 15px; border-radius: 4px; font-weight: 600; text-align: center; border: 1px solid #4caf50; font-size: 14px; margin-bottom: 20px;">
-                    PAYMENT RECEIVED
-                </div>
-                
-                <!-- Payment Details - Compact Corporate Boxes -->
-                <div class="payment-summary" style="display: flex; justify-content: space-between; margin: 20px 0; gap: 15px;">
-                    <div class="payment-box" style="flex: 1; border: 1px solid ${primaryColor}; border-radius: 4px; padding: 15px; background: ${lightBg};">
-                        <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Amount</div>
-                        <div class="payment-amount" style="font-size: 20px; font-weight: 700; color: ${primaryColor}; text-align: center; margin: 5px 0;">${amount} LKR</div>
-                    </div>
-                    
-                    <div class="payment-box" style="flex: 1; border: 1px solid ${primaryColor}; border-radius: 4px; padding: 15px; background: ${lightBg};">
-                        <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Method</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Bank Transfer</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Ref: TRX${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}</div>
-                    </div>
-                    
-                    <div class="payment-box" style="flex: 1; border: 1px solid ${primaryColor}; border-radius: 4px; padding: 15px; background: ${lightBg};">
-                        <div class="payment-box-title" style="font-size: 14px; font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; text-align: center;">Payment Details</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Date: ${docDate}</div>
-                        <div class="payment-detail" style="font-size: 13px; text-align: center; margin: 3px 0;">Status: Completed</div>
-                    </div>
-                </div>
-                
-                <!-- Items Table -->
-                <table class="items-table" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                    <thead>
-                        <tr>
-                            <th class="description-cell" style="background-color: ${primaryColor}; color: white; text-align: left; padding: 10px 12px; font-weight: 600; font-size: 14px; width: 70%;">Description</th>
-                            <th class="amount-cell" style="background-color: ${primaryColor}; color: white; text-align: left; padding: 10px 12px; font-weight: 600; font-size: 14px; width: 30%; text-align: right;">Amount (LKR)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="description-cell" style="padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 14px;">
-                                <strong>${itemTier}</strong><br>
-                                ${itemName}<br>
-                                ${description ? description : ''}
-                                ${benefits.length > 0 ? `
-                                <ul>
-                                    ${benefits.map(benefit => `<li>${benefit}</li>`).join('')}
-                                </ul>
-                                ` : ''}
-                                Full payment as per invoice ${docNumber.replace('RCPT', 'INV')}
-                            </td>
-                            <td class="amount-cell" style="padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 14px; text-align: right;">${amount}</td>
-                        </tr>
-                        <tr class="total-row" style="font-weight: 700; background-color: ${lightBg};">
-                            <td class="description-cell" style="padding: 10px 12px; border-top: 2px solid ${primaryColor}; border-bottom: none;">Total Amount Received</td>
-                            <td class="amount-cell" style="padding: 10px 12px; border-top: 2px solid ${primaryColor}; border-bottom: none; text-align: right;">${amount} LKR</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Notes Section -->
-                <div class="notes-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eaeaea;">
-                    <div class="notes-title" style="font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; font-size: 15px;">Acknowledgement & Notes:</div>
-                    <div class="notes-content" style="font-size: 13px; line-height: 1.5; color: #555;">
-                        This receipt serves as official confirmation that we have received the full payment.<br>
-                        We sincerely thank you for your business.<br>
-                        For any queries regarding this receipt, please contact the organization using the details provided above.
-                    </div>
-                </div>
-                
-                <!-- Footer -->
-                <div class="footer" style="margin-top: auto; text-align: center; font-size: 11px; color: #777; border-top: 1px solid #eaeaea; padding-top: 12px; padding-bottom: 5px;">
-                    This is an official payment receipt from ${orgName}.<br>
-                    Generated on: ${docDate}
-                </div>
-            </div>
-        `;
-    }
-    
-    // Helper function to lighten a color
-    function lightenColor(color, factor) {
-        // Convert hex to RGB
-        let r = parseInt(color.substr(1, 2), 16);
-        let g = parseInt(color.substr(3, 2), 16);
-        let b = parseInt(color.substr(5, 2), 16);
-        
-        // Lighten the color
-        r = Math.min(255, Math.floor(r + (255 - r) * factor));
-        g = Math.min(255, Math.floor(g + (255 - g) * factor));
-        b = Math.min(255, Math.floor(b + (255 - b) * factor));
-        
-        // Convert back to hex
-        return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
-});
+                <div class="status-badge" style="background-color: #e8f5e8; color
