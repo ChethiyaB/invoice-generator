@@ -255,15 +255,57 @@ footer {
 .color-picker {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.color-picker:focus-within {
+    border-color: #0056a6;
+    box-shadow: 0 0 0 3px rgba(0, 86, 166, 0.1);
+}
+
+.color-picker input[type="color"] {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Hide default color input UI */
+.color-picker input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}
+.color-picker input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 4px;
 }
 
 .color-preview {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
+
+.color-value {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+    font-size: 0.875rem;
+    color: #555;
+    letter-spacing: 0.5px;
+    min-width: 70px;
+}
+
 
 /* Print Styles */
 @media print {
