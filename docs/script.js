@@ -367,8 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="notes-title" style="font-weight: 600; color: ${primaryColor}; margin-bottom: 8px; font-size: 15px;">Acknowledgement & Notes:</div>
                     <div class="notes-content" style="font-size: 13px; line-height: 1.5; color: #555;">
                         This receipt serves as official confirmation that we have received the full payment.<br>
-                        We sincerely thank you for your business.<br>
-                        For any queries regarding this receipt, please contact the organization using the details provided above.
+                        For any queries regarding this receipt, please contact the organization using the details provided above.<br>
                     </div>
                 </div>
                 
