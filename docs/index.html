@@ -34,7 +34,7 @@ iesl.uopchapter@gmail.com</textarea>
                     <label for="primary-color">Primary Color</label>
                     <div class="color-picker">
                         <input type="color" id="primary-color" value="#0056a6">
-                        <div class="color-preview" id="color-preview" style="background-color: #0056a6;"></div>
+                        <div class="color-preview" id="color-preview"></div>
                         <span id="color-value">#0056a6</span>
                     </div>
                 </div>
@@ -53,14 +53,45 @@ iesl.uopchapter@gmail.com</textarea>
                 </div>
                 
                 <form id="document-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="doc-number">Document Number</label>
-                            <input type="text" id="doc-number" placeholder="e.g., ORG/INV/2025/001" required>
+                    <!-- Invoice-specific fields -->
+                    <div class="invoice-fields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoice-number">Invoice Number</label>
+                                <input type="text" id="invoice-number" placeholder="e.g., ORG/INV/2025/001">
+                            </div>
+                            <div class="form-group">
+                                <label for="invoice-date">Invoice Date</label>
+                                <input type="date" id="invoice-date">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Receipt-specific fields -->
+                    <div class="receipt-fields" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="receipt-number">Receipt Number</label>
+                                <input type="text" id="receipt-number" placeholder="e.g., ORG/RCPT/2025/001">
+                            </div>
+                            <div class="form-group">
+                                <label for="receipt-date">Receipt Date</label>
+                                <input type="date" id="receipt-date">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="original-invoice">Original Invoice Number</label>
+                                <input type="text" id="original-invoice" placeholder="e.g., ORG/INV/2025/001">
+                            </div>
+                            <div class="form-group">
+                                <label for="payment-method">Payment Method</label>
+                                <input type="text" id="payment-method" placeholder="e.g., Bank Transfer, Cash, etc." value="Bank Transfer">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="doc-date">Date</label>
-                            <input type="date" id="doc-date" required>
+                            <label for="payment-reference">Payment Reference (Optional)</label>
+                            <input type="text" id="payment-reference" placeholder="e.g., TRX20251015">
                         </div>
                     </div>
                     
